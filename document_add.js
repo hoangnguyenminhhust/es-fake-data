@@ -3,12 +3,56 @@ const faker = require('faker/locale/vi');
 const fs = require('fs');
 const { argv } = require('process');
 
-let stream = fs.createWriteStream('faker-data.txt', {flags: 'a'})
+let stream = fs.createWriteStream('faker-data-3.json', {flags: 'a'})
 
 let index = 0;
 
-function test(a) {
 
+async function auto_insert(a) {
+  const numVari = faker.random.number(10)
+  const numModi = faker.random.number(10)
+  let vari = [];
+  let modi = [];
+for (let j = 0; j < numModi; j++) {
+  await modi.push({
+    id: faker.random.uuid(),
+    ownerId: faker.random.uuid(),
+    version: faker.random.number(),
+    isDeleted: faker.random.boolean(),
+    name: faker.name.jobTitle(),
+    ordinal: faker.random.number(333),
+    priceMoney: {
+      amount: faker.random.number(333333),
+      currency: faker.random.words(),
+    }
+  })  
+}
+  for (let j = 0 ; j < numVari ; j++) {
+  await vari.push({
+  id: faker.random.uuid(),
+  ownerId: faker.random.uuid(),
+  version: faker.random.number(33),
+  isDeleted: faker.random.boolean(),
+  name: faker.name.lastName(),
+  itemId: faker.random.uuid(),
+  ordinal: faker.random.number(33),
+  priceMoney: [{
+    amount: faker.random.number(),
+    currency: faker.random.arrayElement(["vnd","dollar","bath","gr"])
+  }],
+  pricingType: faker.random.arrayElement(["FIXED_PRICING","VARUABLE_PRICING"]),
+  sku: faker.random.word(),
+  trackInventory: faker.random.boolean(),
+  upc: faker.random.word(),
+  options: [{
+    id: faker.random.uuid(),
+    name: faker.name.lastName(),
+    displayName: faker.name.jobTitle(),
+    description: faker.random.word(),
+    value: faker.random.number(3000)
+  }]
+})
+  }
   const myBody = {
     name: faker.commerce.product(),
     description: faker.lorem.text(),
@@ -31,66 +75,21 @@ function test(a) {
       properties: {
         id: faker.random.uuid(),
         ownerId: faker.random.uuid(),
-
-
-
         version: faker.random.number(),
         isDeleted: faker.random.boolean(),
         name: faker.name.lastName(),
         percentage: faker.random.word()
       }
     },
-    variations: [{
-      id: faker.random.uuid(),
-      ownerId: faker.random.uuid(),
-      version: faker.random.number(33),
-      isDeleted: faker.random.boolean(),
-      name: faker.name.lastName(),
-      itemId: faker.random.uuid(),
-      ordinal: faker.random.number(33),
-      priceMoney: [{
-        amount: faker.random.number(),
-        currency: faker.random.word("curency")
-      }],
-      pricingType: "vnd",
-      sku: faker.random.word(),
-      trackInventory: faker.random.boolean(),
-      upc: faker.random.word(),
-      options: [{
-        id: faker.random.uuid(),
-        name: faker.name.lastName(),
-        displayName: faker.name.jobTitle(),
-        description: faker.random.word(),
-        value: faker.random.number(3000)
-      }]
-
-    }],
-    modifiers: [{
-      id: faker.random.uuid(),
-      ownerId: faker.random.uuid(),
-      version: faker.random.number(),
-      isDeleted: faker.random.boolean(),
-      name: faker.name.jobTitle(),
-      ordinal: faker.random.number(333),
-      priceMoney: {
-        amount: faker.random.number(333333),
-        currency: faker.random.words(),
-      }
-    }]
-
+    variations: vari,
+    modifiers: modi
   }
-  const index1 = {
-    index: 'catalog',
-    type: 'constituencies',
-    body: myBody
-  }
-  const index2 = JSON.stringify(myBody)
-  const index3 = index2 + "\n"
-  console.log(index3)
-  stream.write(index3)
+  const string_line = JSON.stringify(myBody)
+  const string = string_line + "\n"
+  stream.write(string)
 
   if (index < a) {
-    process.nextTick(test, a);
+    process.nextTick(auto_insert, a);
     index += 1
   } else {
     console.log('end')
@@ -99,5 +98,4 @@ function test(a) {
 }
 
 const count = Number(argv[2]) || 5
-console.log(count)
-test(count)
+auto_insert(count)
