@@ -1,7 +1,7 @@
 var client = require('./connection.js');
 
 client.indices.create({  
-  index: 'gov'
+  index: 'catalog'
 },function(err,resp,status) {
   if(err) {
     console.log(err);

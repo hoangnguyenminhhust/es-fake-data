@@ -6,3 +6,6 @@ client.cluster.health({},function(err,resp,status) {
 client.count({index: 'gov',type: 'constituencies'},function(err,resp,status) {  
     console.log("constituencies",resp);
   });
+  client.get({index: 'gov',type: 'constituencies'},function(err,resp,status) {  
+    console.log("constituencies",resp);
+  });
